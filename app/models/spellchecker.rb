@@ -48,18 +48,47 @@ class Spellchecker
   end
   
   #generate all correction candidates at an edit distance of 1 from the input word.
-  def edits1(word)
+ def edits1(word)
     
-    deletes    = []
+    deletes = []
+    i = 0
+    while i < word.length
+      deletes_word = word
+      deletes << deletes_word.slice(0,i) + deletes_word.slice(i+1, word.length)
+      i+=1
+    end
     #all strings obtained by deleting a letter (each letter)
     transposes = []
+    i = 0
+    while i < word.length
+      transpose_word = word
+      letter_to_replace = transpose_word[i]
+
+      transpose_word[i] = transpose_word[i-1]
+      transpose_word[i-1] = letter_to_replace
+      transposes << transpose_word
+
+      transpose_word = word
+      letter_to_replace = transpose_word[i]
+
+      if(transpose_word[i+1] != nil)
+        transpose_word[i] = transpose_word[i+1]
+        transpose_word[i+1] = letter_to_replace
+        transposes << transpose_word
+      end
+
+      i+=1
+    end
     #all strings obtained by switching two consecutive letters
     inserts = []
+    word
+    inserts(word)
+
     # all strings obtained by inserting letters (all possible letters in all possible positions)
     replaces = []
     #all strings obtained by replacing letters (all possible letters in all possible positions)
 
-    return (deletes + transposes + replaces + inserts).to_set.to_a #eliminate duplicates, then convert back to array
+    #return (deletes + transposes + replaces + inserts).to_set.to_a #eliminate duplicates, then convert back to array
   end
   
 
@@ -84,6 +113,20 @@ class Spellchecker
   # returns distance-2 replacements sorted by descending frequency in the model
   # else returns nil
   def correct(word)
+  end
+
+  private
+
+  def inserts word
+    word.split(//).each_with_index do |word_char, index|
+      puts index
+      inserts_word = word
+      ALPHABET.split(//).each do |alpha_char|
+        inserts_word[index] = alpha_char
+        puts "alpha_character: #{alpha_char}, insert_word: #{inserts_word}"
+        inserts << inserts_word
+      end
+    end
   end
     
   
